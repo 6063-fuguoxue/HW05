@@ -63,6 +63,8 @@ function draw() {
   noStroke();
   fill(0, 0, 0, 150);
 
+  // translate(0, windowHeight);
+
   // Get the rows of squirrel info on a particular date
   for (let i=0; i<num_row; i++) {
     let date = table.get(i, "Date"); 
@@ -71,8 +73,13 @@ function draw() {
       let y = table.getNum(i, "Y");
       let dScaling = table.getNum(i, "Hectare Squirrel Number");
       let fillColor = table.get(i, "Primary Fur Color");
-      pointX = map(x, minX, maxX, 0, width);
-      pointY = map(y, minY, maxY, 0, height);
+      
+      // Use map() to make the points fall in Central-Park-shaped area
+      pointY = map(y, minY, maxY, height, 0);
+      let scaling_factor = height/(maxY - minY); // Get the scaling factor
+      let graph_width = scaling_factor*(maxX-minX);
+      let margin_w = (windowWidth - graph_width)/2;
+      pointX = map(x, minX, maxX, margin_w, graph_width + margin_w);
 
       // Use switch statement to determine the fill color of each circle
       switch(fillColor){
@@ -88,7 +95,7 @@ function draw() {
         case '': 
         fill(255, 255, 255, 150);
       }
-      ellipse(pointX, pointY, 5*dScaling);
+      ellipse(pointX, pointY, 3*dScaling);
     }
   }
 }
