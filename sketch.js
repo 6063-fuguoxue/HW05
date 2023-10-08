@@ -86,7 +86,7 @@ function draw() {
         fill(0, 0, 0, 150);
         break;
         case '': 
-        fill(255, 255, 255, 250);
+        fill(255, 255, 255, 150);
       }
       ellipse(pointX, pointY, 5*dScaling);
     }
