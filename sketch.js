@@ -24,6 +24,8 @@ function setup() {
   //count the rows and columns
   num_row = table.getRowCount();
   num_col = table.getColumnCount();
+  print(num_row, num_col);
+  
   for (let i=0; i<num_row; i++) {
     let xCurrent = table.getNum(i, "X");
     let yCurrent = table.getNum(i, "Y");
@@ -42,37 +44,42 @@ function setup() {
   // Get number of dates with records
   numDates = dates.length;
 
-  // Similarly, get all the unique 'Combination of Primary and Highlight Color' strings into an array. Do the same for 'Highlight Fur Color' and 'Primary Fur Color' columns. No need to sort. 
-  let furColor = table.getColumn('Combination of Primary and Highlight Color');
-  let highlightColor = table.getColumn('Highlight Fur Color');
-  let primaryColor = table.getColumn('Primary Fur Color');
+
+  // I used the block of codes below to see how many unique strings there are in the 'Combination of Primary and Highlight Color', 'Highlight Fur Color', and 'Primary Fur Color' columns. However, the arrays I get are long and messy except for that of 'Primary Fur Color'. Therefore, later in this code I chose to color the circles according to the 'Primary Fur Color' column. 
+  // let furColor = table.getColumn('Combination of Primary and Highlight Color');
+  // let highlightColor = table.getColumn('Highlight Fur Color');
+  // let primaryColor = table.getColumn('Primary Fur Color');
   
-  furColor = furColor.filter(onlyUnique);
-  highlightColor = highlightColor.filter(onlyUnique);
-  primaryColor = primaryColor.filter(onlyUnique);
+  // furColor = furColor.filter(onlyUnique);
+  // highlightColor = highlightColor.filter(onlyUnique);
+  // primaryColor = primaryColor.filter(onlyUnique);
 
-  print(furColor);
-  print(highlightColor);
-  print(primaryColor);
+  // print(furColor);
+  // print(highlightColor);
+  // print(primaryColor);
 
-  squirrelNum = table.getColumn('Hectare Squirrel Number');
+
 }
 
 function draw() {
   background(200, 255, 200);
   noStroke();
   fill(0, 0, 0, 150);
+  textSize(windowWidth/50);
+  text("Date: " + dates[dateIndex], 50, 50);
+  // Reset daily total number of squirrels recorded to 0
+  let daily_total = 0;
 
-  // translate(0, windowHeight);
-
-  // Get the rows of squirrel info on a particular date
   for (let i=0; i<num_row; i++) {
+    // Get the rows of squirrel info on a particular date   
     let date = table.get(i, "Date"); 
-    if (date == dates[dateIndex]) {
-      let x = table.getNum(i, "X");
-      let y = table.getNum(i, "Y");
-      let dScaling = table.getNum(i, "Hectare Squirrel Number");
-      let fillColor = table.get(i, "Primary Fur Color");
+    
+    if (date == dates[dateIndex]) {    
+      let x = table.getNum(i, "X"); // Get longitude
+      let y = table.getNum(i, "Y"); // Get latitude
+      let dScaling = table.getNum(i, "Hectare Squirrel Number"); // Get squirrel number recorded in this row
+      daily_total += dScaling; // Upodate daily total number of squirrels
+      let fillColor = table.get(i, "Primary Fur Color"); // Get fur color
       
       // Use map() to make the points fall in Central-Park-shaped area
       pointY = map(y, minY, maxY, height, 0);
@@ -95,9 +102,13 @@ function draw() {
         case '': 
         fill(255, 255, 255, 150);
       }
-      ellipse(pointX, pointY, 3*dScaling);
+      ellipse(pointX, pointY, 3*dScaling); // The diameter of a circle follows the recorded squirrel number
     }
   }
+  
+  fill(0, 0, 0, 150);
+  text("Total number of recorded squirrels: " + daily_total, 50, 100);
+  
 }
 
 function mouseClicked() {
